@@ -7,14 +7,26 @@ import styles from '../../../styles/Jogo.module.css'
 
 export default function Jogo() {
     const router = useRouter()
+
+    const [valido, setValido] = useState(false)
     const [portas, setPortas] = useState([])
+
+    useEffect(() => {
+        const portas = +router.query.portas
+        const temPresente = +router.query.temPresente
+
+        const qtdePortasValidas = portas >= 3 && portas <= 100
+        const temPresenteValido = temPresente >= 1 && temPresente <= portas
+
+        setValido(qtdePortasValidas && temPresenteValido)
+    },[portas])
 
     useEffect(() => {
         const portas = +router.query.portas
         const temPresente = +router.query.temPresente
         setPortas(criarPortas(portas, temPresente))
         
-    }, [router.query.portas, router.query.temPresente])
+    }, [router?.query])
 
 
     function renderPortas() {
@@ -26,13 +38,13 @@ export default function Jogo() {
     return (
         <div className={styles.jogo}>
             <div className={styles.portas}>
-                {renderPortas()}
+                {valido? renderPortas() : <h2>Valores inválidos</h2>}
             </div>
             <div className={styles.botoes}>
                 <Link href="/">
                     <button>Reiniciar jogo</button>
                 </Link>
             </div>
-        </div>
+        </div>  
     );
 }
